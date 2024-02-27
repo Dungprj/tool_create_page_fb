@@ -20,7 +20,7 @@ class User:
             # Existing cookies...
         ]
 
-        for cookie in cookies:
+        for cookie in cookies: 
             self.driver.add_cookie(cookie)
 
         # Refresh the page to apply the cookies
@@ -50,7 +50,7 @@ class Page:
 
 def run_scenario(user, page):
     user.login()
-    user.resize_tab_and_content((50, 200))  # Set the desired size for the tab and content
+    user.resize_tab_and_content((100, 600))  # Set the desired size for the tab and content
     page.create_facebook_page()
     # Additional actions as needed
     user.close()
@@ -76,7 +76,7 @@ def main():
         if col == 0:
             rows += 1
         window_position = (col * screen_width // columns, (rows - 1) * screen_height // rows)
-        user = User((50, 200), window_position)
+        user = User((100, 600), window_position)
         page = Page(user)
         thread = threading.Thread(target=run_scenario, args=(user, page))
         threads.append(thread)
