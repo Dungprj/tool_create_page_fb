@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
 
 class App:
     def __init__(self, root):
@@ -28,7 +27,7 @@ class App:
         ttk.Button(self.inner_frame, text="Dừng tất cả", command=self.stop_all).grid(row=0, column=7, padx=5, pady=5, sticky='w')
 
         self.checkboxes = []
-        self.status_text = ScrolledText(self.root, wrap=tk.WORD, height=10, width=50)
+        self.status_text = tk.Text(self.root, wrap=tk.WORD, height=10, width=50)
         self.status_text.pack(fill='both', expand=True)
 
         self.progress_style = ttk.Style()
@@ -132,13 +131,16 @@ class App:
         self.update_ui()
 
     def view_single(self, thread_id):
-        if self.thread_states[thread_id] == "running":
-            self.show_status(f"Luồng {thread_id} đang chạy, không thể xem ngay lúc này.", "red")
-        else:
+        if thread_id in self.running_threads:
             self.show_status(f"Đang xem luồng {thread_id}", "blue")
+        else:
+            self.show_status(f"Luồng {thread_id} chưa chạy, không thể xem ngay lúc này.", "red")
 
     def show_status(self, message, color):
-        self.status_text.insert(tk.END, message + "\n", color)
+        self.status_text.configure(state='normal')
+        self.status_text.insert(tk.END, message + "\n", f"{color}_tag")
+        self.status_text.tag_configure(f"{color}_tag", foreground=color)
+        self.status_text.configure(state='disabled')
         self.status_text.see(tk.END)
 
     def update_ui(self):
@@ -148,10 +150,10 @@ class App:
 
             if thread_id in self.running_threads:
                 progress_bar.configure(style="Running.TProgressbar")
-                button_start.configure(text="Đang chạy", command=lambda i=thread_id, pb=progress_bar: self.continue_single(i))
+                button_start.configure(text="Đang chạy", command=lambda i=thread_id, pb=progress_bar: self.continue_single(i), state="disabled")
             else:
                 progress_bar.configure(style="Status.TProgressbar")
-                button_start.configure(text="Bắt đầu", command=lambda i=thread_id, pb=progress_bar: self.start_or_continue_single(i, pb))
+                button_start.configure(text="Bắt đầu", command=lambda i=thread_id, pb=progress_bar: self.start_or_continue_single(i, pb), state="normal")
 
 
 if __name__ == "__main__":
