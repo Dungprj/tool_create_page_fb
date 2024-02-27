@@ -54,8 +54,8 @@ class App:
 
             progress_bar = ttk.Progressbar(self.inner_frame, mode='determinate', length=100, maximum=100, style="Status.TProgressbar")
             button_start = ttk.Button(self.inner_frame, text="Bắt đầu", command=lambda i=i, pb=progress_bar: self.start_or_continue_single(i, pb))
-            button_stop = ttk.Button(self.inner_frame, text="Dừng", command=lambda i=i: self.stop_single(i))
-            button_view = ttk.Button(self.inner_frame, text="Xem", command=lambda i=i: self.view_single(i))
+            button_stop = ttk.Button(self.inner_frame, text="Dừng", command=lambda i=i: self.stop_single(i), state="disabled")  # Nút dừng ở chế độ disable mặc định
+            button_view = ttk.Button(self.inner_frame, text="Xem", command=lambda i=i: self.view_single(i), state="disabled")  # Nút xem ở chế độ disable mặc định
 
             progress_bar.grid(row=i, column=1, padx=5, pady=5, sticky='w')
             button_start.grid(row=i, column=2, padx=5, pady=5, sticky='w')
@@ -147,13 +147,19 @@ class App:
         for thread_id in range(1, 11):
             progress_bar = self.inner_frame.grid_slaves(row=thread_id, column=1)[0]
             button_start = self.inner_frame.grid_slaves(row=thread_id, column=2)[0]
+            button_stop = self.inner_frame.grid_slaves(row=thread_id, column=3)[0]
+            button_view = self.inner_frame.grid_slaves(row=thread_id, column=4)[0]
 
             if thread_id in self.running_threads:
                 progress_bar.configure(style="Running.TProgressbar")
                 button_start.configure(text="Đang chạy", command=lambda i=thread_id, pb=progress_bar: self.continue_single(i), state="disabled")
+                button_stop.configure(state="normal")  # Khi luồng đang chạy, mở khóa nút dừng
+                button_view.configure(state="normal")  # Khi luồng đang chạy, mở khóa nút xem
             else:
                 progress_bar.configure(style="Status.TProgressbar")
                 button_start.configure(text="Bắt đầu", command=lambda i=thread_id, pb=progress_bar: self.start_or_continue_single(i, pb), state="normal")
+                button_stop.configure(state="disabled")  # Khi luồng chưa chạy, khoá nút dừng
+                button_view.configure(state="disabled")  # Khi luồng chưa chạy, khoá nút xem
 
 
 if __name__ == "__main__":
